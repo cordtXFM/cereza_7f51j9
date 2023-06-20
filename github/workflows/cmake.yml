@@ -1,0 +1,54 @@
+name: x86_64 builds
+
+on: push
+
+env:
+  BUILD_TYPE: Release
+
+jobs:
+  build-anisette-server-x86_64:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y gdc-12 dub libz-dev
+
+      - name: Build
+        run: dub build :anisette-server -b release --compiler=gdc-12 -c "static"
+
+      - name: Rename
+        run: mv "${{github.workspace}}/bin/provision_anisette-server" "${{github.workspace}}/bin/anisette-server-x86_64"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: anisette-server-x86_64
+          path: |
+            ${{github.workspace}}/bin/anisette-server-x86_64
+
+  build-anisette-server-i686:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: recursive
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y gdc-12-i686-linux-gnu dub libz-dev
+
+      - name: Build
+        run: dub build :anisette-server -b release --compiler=i686-linux-gnu-gdc-12 -c "static"
+
+      - name: Rename
+        run: mv "${{github.workspace}}/bin/provision_anisette-server" "${{github.workspace}}/bin/anisette-server-i686"
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: anisette-server-i686
+          path: |
+            ${{github.workspace}}/bin/anisette-server-i686
+
